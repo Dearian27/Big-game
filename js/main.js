@@ -79,10 +79,16 @@ blenderShootingLeft.src = './img/blender/blender-shootingLeft.svg'
 
 //KTMAN------------------
 let ktmanStayRight = new Image()
-ktmanStayRight.src = './img/ktman/ktman-stayAnim.svg'
+ktmanStayRight.src = './img/ktman/ktman-stayRight.svg'
 
 let ktmanStayLeft = new Image()
-ktmanStayLeft.src = './img/ktman/ktman-stayLeft.png'
+ktmanStayLeft.src = './img/ktman/ktman-stayLeft.svg'
+
+let ktmanRunLeft = new Image()
+ktmanRunLeft.src = './img/ktman/ktman-runLeft.svg'
+
+let ktmanRunRight = new Image()
+ktmanRunRight.src = './img/ktman/ktman-runRight.svg'
 
 let ktmanDisk = new Image()
 ktmanDisk.src = './img/ktman/ktmanDisk.svg'
@@ -120,6 +126,7 @@ class Player {
         this.directionRight = true;
         this.isGround = false;
         this.frames = 0;
+        this.threeframes = 0;
         this.character = 'blender'  // blender/ktman
 
     }
@@ -129,13 +136,47 @@ class Player {
 
         if(this.character == 'ktman')
         {
-            c.drawImage(ktmanStayRight,
-            12 * this.frames,0,
+            if(keys.right.pressed)
+            {
+            c.drawImage(ktmanRunRight,
+            12 * this.threeframes + this.threeframes,0,
             12, 17,
             this.position.x,
             this.position.y,
             this.width,
             this.height);
+            }
+            else if(keys.left.pressed)
+            {
+                c.drawImage(ktmanRunLeft,
+                    12 * this.threeframes + this.threeframes,0,
+                    12, 17,
+                    this.position.x,
+                    this.position.y,
+                    this.width,
+                    this.height);
+            }
+            else if(watchRight && !keys.right.pressed && !keys.left.pressed)
+            {
+                c.drawImage(ktmanStayRight,
+                    12 * this.frames,0,
+                    12, 17,
+                    this.position.x,
+                    this.position.y,
+                    this.width,
+                    this.height);
+            }
+            else if(!watchRight && !keys.right.pressed && !keys.left.pressed)
+            {
+                console.log('left')
+                c.drawImage(ktmanStayLeft,
+                    12 * this.threeframes + this.threeframes ,0,
+                    12, 17,
+                    this.position.x,
+                    this.position.y,
+                    this.width,
+                    this.height);
+            }
         }
         else if(this.character == 'blender')
         {
@@ -227,13 +268,23 @@ class Player {
 
 //UPDATE//
     setInterval(()=>{
-        if(player.character == 'ktman')
+        if(player.character == 'ktman' && !keys.left.pressed && !keys.right.pressed)
         {
             player.frames++
             if(player.frames > 24) player.frames = 0;
         }
         
     }, 30)
+
+    setInterval(()=>{
+        if(player.character == 'ktman' && (keys.left.pressed || keys.right.pressed || !watchRight))
+        {
+            player.threeframes++
+            if(player.threeframes > 3) player.threeframes = 0;
+        }
+        
+    }, 200)
+
     setInterval(()=>{
         if(player.character == 'ktman')
         {
@@ -841,14 +892,17 @@ function animate() {
                 bullets = []
                 init()
         }
-        if (player.position.x < enemy.position.x + enemy.width + 200 &&
-            player.position.x + player.width + 200 > enemy.position.x &&
-            player.position.y < enemy.position.y + enemy.height + 200 &&
-            player.height + 200 + player.position.y > enemy.position.y){
-            enemy.position.x -= 5    
+      /* if (player.position.x < enemy.position.x + enemy.width  &&
+            player.position.y < enemy.position.y + enemy.height + 500 &&
+            player.height + 500 + player.position.y > enemy.position.y){
+            enemy.position.x -= 3
         }
+       else if(player.position.x + player.width + 100 > enemy.position.x &&
+             player.position.y < enemy.position.y + enemy.height + 500 &&
+            player.height + 500 + player.position.y > enemy.position.y)
+           enemy.position.x += 3
+*/
     })
-
 
     
     // win
